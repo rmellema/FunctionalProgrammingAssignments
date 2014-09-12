@@ -8,3 +8,6 @@ isPrime n
 cntPrimes :: Integer -> Int
 cntPrimes n = length [x | x <- [1..n], isPrime x]
 
+oddPspTO ::Integer -> Integer -> [Integer]
+oddPspTO a upb = [ n | n <- [3, 5..upb], a^(n-1) `mod` n == 1, not (isPrime n)]
+
