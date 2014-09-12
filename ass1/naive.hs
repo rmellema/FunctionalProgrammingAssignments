@@ -18,7 +18,7 @@ expmod a e n
     | e == 1    = a `mod` n
     | a >  n    = expmod (a `mod` n) e n
     | otherwise = expmod (a ^ divider) (e `div` divider) n
-    where divider = head [x | x <- [2..e], e `mod` x == 0]
+    where divider = head [x | x <- 2:[3,5..e], e `mod` x == 0]
 
 prop_expmod :: Integer -> Integer -> Integer -> Bool
 prop_expmod a e n = ((n <= 0) || (e < 0)) ||
