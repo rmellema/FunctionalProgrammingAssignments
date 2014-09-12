@@ -4,9 +4,10 @@
 \usepackage{fullpage}
 \usepackage{listings}
 \usepackage[usenames,dvipsnames]{color}
+\usepackage{hyperref}
 
 \definecolor{light-gray}{gray}{0.95}
-\lstset{tabsize=4, breaklines=true, breakatwhitespace=true, basicstyle=\scriptsize, language={Haskell}, showstringspaces=false, numberstyle=\tiny, escapeinside={/*(}{)*/}}
+\lstset{tabsize=4, breaklines=true, breakatwhitespace=true, basicstyle=\scriptsize, language={Haskell}, showstringspaces=false, numberstyle=\tiny}
 
 \title{Functional Programming lab 1}
 \author{Ren\'e Mellema (s2348802) \and Xeryus Stokkel (s2332795)}
@@ -17,9 +18,8 @@
 
 \section*{Exercise 1}
 \begin{enumerate}[(a)]
-	\item 
-
-	\item 
+	\item All the code for this exercise is at the bottom of this exercise.
+	\item From $k=12$ onwards the processing time is noticeable, the processing time is then 0.26s compared to 0.08s for $k=11$. At $k=16$ we are just before the minute barrier (46.33s) while for $k=17$ the time it takes to compute has crossed the 3 minute barrier (190.41s).
 \end{enumerate}
 
 \lstinputlisting[numbers=left, backgroundcolor=\color{light-gray}, frame=single, title=\lstname]{naive.hs}

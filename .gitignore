@@ -15,6 +15,7 @@ cabal.config
 *.log
 *.pdf
 *.synctex.gz
+*.out
 
 # vim
 *.swp
