@@ -9,3 +9,12 @@ cabal-dev
 .cabal-sandbox/
 cabal.sandbox.config
 cabal.config
+
+# TeX
+*.aux
+*.log
+*.pdf
+*.synctex.gz
+
+# vim
+*.swp
