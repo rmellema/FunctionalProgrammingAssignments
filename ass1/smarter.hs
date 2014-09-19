@@ -9,6 +9,10 @@ expmod a e n
     | even e	= (expmod (a * a) (e `div` 2) n)
     | otherwise = (expmod a (e - 1) n) * a `mod` n
 
+insertionSort :: (Ord a) => [a] -> [a]
+insertionSort [] = []
+insertionSort (x:xs) = insert x (insertionSort xs)
+
 -- The order from the exercise description
 order' :: Integer -> Integer -> Integer
 order' a p = ord a (a `mod` p) 1 p
@@ -26,5 +30,12 @@ primeFactors n = pF n 2
             | otherwise      = pF a (p+2)
 
 order :: Integer -> Integer -> Integer
-order a p = head [ x | x <- nub (map product (subsequences factors)), expmod a x p == 1]
+order a p
+    | null orders   = 1
+    | otherwise     = head orders
    where factors = primeFactors (p-1)
+         candidates = insertionSort (nub (map product (subsequences factors)))
+         orders = head [ x | x <- candidates, expmod a x p == 1]
+
+--oddPspTO :: Integer -> Integer -> [Integer]
+--oddPspTO a upb
