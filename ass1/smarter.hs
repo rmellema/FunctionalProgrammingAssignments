@@ -13,6 +13,13 @@ insertionSort :: (Ord a) => [a] -> [a]
 insertionSort [] = []
 insertionSort (x:xs) = insert x (insertionSort xs)
 
+mergeAsc :: [Integer] -> [Integer] -> [Integer]
+mergeAsc [] ys = ys
+mergeAsc xs [] = xs
+mergeAsc (x:xs) (y:ys)
+    | x >= y    = y : x : mergeAsc xs ys
+    | otherwise = x : y : mergeAsc xs ys
+
 -- The order from the exercise description
 order' :: Integer -> Integer -> Integer
 order' a p = ord a (a `mod` p) 1 p
@@ -35,7 +42,7 @@ order a p
     | otherwise     = head orders
    where factors = primeFactors (p-1)
          candidates = insertionSort (nub (map product (subsequences factors)))
-         orders = head [ x | x <- candidates, expmod a x p == 1]
+         orders = [ x | x <- candidates, expmod a x p == 1]
 
 --oddPspTO :: Integer -> Integer -> [Integer]
 --oddPspTO a upb
