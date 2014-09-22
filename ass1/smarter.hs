@@ -21,6 +21,14 @@ mergeAsc (x:xs) (y:ys)
     | x >  y    = y : mergeAsc (x:xs) ys
     | otherwise = x : mergeAsc xs (y:ys)
 
+-- This isPrime is a slightly optimised form of isPrime in the first exercise
+isPrime' :: Integer -> Bool
+isPrime' 1 = False
+isPrime' 2 = True
+isPrime' n
+    | even n = False
+    | otherwise = and [ n `mod` x /= 0 | x <- [3,5..(n `div` 2)]]
+
 -- The order from the exercise description
 order' :: Integer -> Integer -> Integer
 order' a p = ord a (a `mod` p) 1 p
@@ -53,32 +61,19 @@ primesTo upb = 2: (pT upb [3,5..upb])
 primes13 :: [Integer]
 primes13 = primesTo (2^13)
 
-oddPspTO :: Integer -> Integer -> [Integer]
+oddPspTO :: Integer -> Integer -> [Integer] --( \label{func:oddPspTo} )--
 oddPspTO a upb = [ n | n <- (ns primes13), (expmod a (n-1) n) == 1, not (isPrime' n)]
     where ns [] = []
           ns (p:ps) = mergeAsc ([p * k * e + p | k <- [1..(div (div upb p) e)]]) (ns ps)
             where e = order a p
 
 oddPspTO25 :: [Integer]
-oddPspTO25 = oddPspTO 2 (2^16)
+oddPspTO25 = oddPspTO 2 (2^25)
 
-isPrime' :: Integer -> Bool
-isPrime' 1 = False
-isPrime' 2 = True
-isPrime' n
-    | even n = False
-    | otherwise = and [ n `mod` x /= 0 | x <- [3,5..(n `div` 2)]]
-
-isPrime :: Integer -> Bool
+isPrime :: Integer -> Bool --( \label{func:isPrime} )--
 isPrime 1 = False
 isPrime 2 = True
 isPrime n = (expmod 2 (n-1) n == 1) && not (n `elem` oddPspTO25)
 
-cntPrimes :: Integer -> Int
+cntPrimes :: Integer -> Int --( \label{func:cntPrimes} )--
 cntPrimes n = length [p | p <- 2:[3,5..n], isPrime p]
-
-dups :: [Integer] -> Bool
-dups [] = False
-dups (x:xs)
-    | x `elem` xs   = True
-    | otherwise     = dups xs
