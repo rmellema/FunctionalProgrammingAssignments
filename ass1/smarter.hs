@@ -43,12 +43,12 @@ order a p
          candidates = insertionSort (nub (map product (subsequences factors)))
          orders = [ x | x <- candidates, expmod a x p == 1]
 
---oddPspTO :: Integer -> Integer -> [Integer]
---oddPspTO a upb
-oddPspTO' a upb = [ n | n <- [3, 5..upb], let p = head (primeFactors n), let q = (n `div` p), (a < p), q `mod` (order a p) == 1, (expmod a (n-1) n) == 1, not (isPrime' n)]
-
 primesTo :: Integer -> [Integer]
-primesTo upb = 2 : [ x | x <- [3,5..upb], isPrime' x]
+primesTo upb = 2: (pT upb [3,5..upb])
+    where pT upb (c:cs)
+            | c >= (upb `div` 2) = (c:cs)
+            | otherwise = c:pT upb ([x | x <- cs, x `mod` c /= 0])
+        
 
 primes13 :: [Integer]
 primes13 = primesTo (2^13)
