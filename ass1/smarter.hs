@@ -37,7 +37,7 @@ order' a p = ord a (a `mod` p) 1 p
 primeFactors :: Integer -> [Integer]
 primeFactors 0 = []
 primeFactors 1 = []
-primeFactors n = pF n (primesTo n)
+primeFactors n = pF n (primesTo (div n 2))
     where pF a (p:ps)
             | a == p        = [p]
             | a `mod` p == 0 = p : pF (a `div` p) (p:ps) 
@@ -49,8 +49,10 @@ order a p
     | null orders   = -1
     | otherwise     = head orders
    where factors = primeFactors (p-1)
-         candidates = insertionSort (nub (map product (subsequences factors)))
+         candidates = prodPSet factors [1]
          orders = [ x | x <- candidates, expmod a x p == 1]
+         prodPSet [] (p:ps) = (p:ps)
+         prodPSet (f:fs) (p:ps) = prodPSet fs (mergeAsc (p:ps) (map (f*) (p:ps)))
 
 primesTo :: Integer -> [Integer]
 primesTo upb = 2: (pT upb [3,5..upb])
