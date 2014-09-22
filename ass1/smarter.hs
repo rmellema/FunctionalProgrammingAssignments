@@ -29,16 +29,16 @@ order' a p = ord a (a `mod` p) 1 p
 primeFactors :: Integer -> [Integer]
 primeFactors 0 = []
 primeFactors 1 = []
-primeFactors n = pF n primes13
+primeFactors n = pF n (primesTo n)
     where pF a (p:ps)
             | a == p        = [p]
             | a `mod` p == 0 = p : pF (a `div` p) (p:ps) 
             | a < p          = error "Something went Horribly wrong..."
             | otherwise      = pF a ps
 
-order :: Integer -> Integer -> Integer
+order :: Integer -> Integer -> Integer --( \label{func:order} )--
 order a p
-    | null orders   = 1
+    | null orders   = -1
     | otherwise     = head orders
    where factors = primeFactors (p-1)
          candidates = insertionSort (nub (map product (subsequences factors)))
@@ -49,7 +49,6 @@ primesTo upb = 2: (pT upb [3,5..upb])
     where pT upb (c:cs)
             | c >= (upb `div` 2) = (c:cs)
             | otherwise = c:pT upb ([x | x <- cs, x `mod` c /= 0])
-        
 
 primes13 :: [Integer]
 primes13 = primesTo (2^13)

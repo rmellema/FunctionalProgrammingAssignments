@@ -6,7 +6,7 @@
 \usepackage{hyperref}
 
 \definecolor{light-gray}{gray}{0.95}
-\lstset{tabsize=4, breaklines=true, breakatwhitespace=true, basicstyle=\scriptsize, language={Haskell}, showstringspaces=false, numberstyle=\tiny}
+\lstset{tabsize=4, breaklines=true, breakatwhitespace=true, basicstyle=\scriptsize, language={Haskell}, showstringspaces=false, numberstyle=\tiny, escapeinside={--(}{)--}}
 
 \renewcommand{\labelenumi}{\textbf{(\alph{enumi})}}
 
@@ -29,10 +29,27 @@
 \lstinputlisting[numbers=left, backgroundcolor=\color{light-gray}, frame=single, title=\lstname]{naive.hs}
 
 \section*{Exercise 2}
-\lstinputlisting[numbers=left, backgroundcolor=\color{light-gray}, frame=single, title=\lstname]{smarter.hs}
+\lstinputlisting[numbers=left, backgroundcolor=\color{light-gray}, frame=single, title=\lstname, label=code:smarter]{smarter.hs}
 
 \begin{enumerate}
-	\item 
+	\item Our \texttt{order} function is defined at line \autoref{func:order} in \autoref{code:smarter}. We tested both \texttt{order} (our function) and \texttt{order'} (the function given in the assignment) for all primes from 3 to $2^n$ for $10 \leq n \leq 16$  and noted the runtime in \autoref{tbl:order}. As we can see our implementation is between 2 and 10 times as fast as the naive implementation.
+	
+\begin{table}[h]
+	\centering
+	\caption{Runtimes of \texttt{order} vs. \texttt{order'} for all primes from 3 to $2^n$ where $10 \leq n \leq 16$}
+	\label{tbl:order}
+	\begin{tabular}{r|r|r}
+		$n$ & \texttt{order} runtime (s) & \texttt{order'} runtime (s) \\
+		\hline
+		10 & 0.06 & 0.11 \\
+		11 & 0.12 & 0.31 \\
+		12 & 0.29 & 1.15 \\
+		13 & 0.82 & 4.15 \\
+		14 & 2.60 & 15.81 \\
+		15 & 7.22 & 60.74 \\
+		16 & 23.41 & 227.91
+	\end{tabular}
+\end{table}
 	\item 
 	\item 
 	\item 
