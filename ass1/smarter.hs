@@ -59,9 +59,21 @@ oddPspTO a upb = [ n | n <- nub (ns primes13), (expmod a (n-1) n) == 1, not (isP
           ns (p:ps) = mergeAsc ([p * k * e + p | k <- [1..(div (div upb p) e)]]) (ns ps)
             where e = order a p
 
+oddPspTO25 :: [Integer]
+oddPspTO25 = oddPspTO 2 (2^16)
+
 isPrime' :: Integer -> Bool
 isPrime' 1 = False
 isPrime' 2 = True
 isPrime' n
     | even n = False
     | otherwise = and [ n `mod` x /= 0 | x <- [3,5..(n `div` 2)]]
+
+isPrime :: Integer -> Bool
+isPrime 1 = False
+isPrime 2 = True
+isPrime n = (expmod 2 (n-1) n == 1) && not (n `elem` oddPspTO25)
+
+cntPrimes :: Integer -> Integer
+cntPrimes n = length [p | p <- 2:[3,5..n], isPrime p]
+
