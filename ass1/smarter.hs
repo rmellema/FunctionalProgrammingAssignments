@@ -17,7 +17,8 @@ mergeAsc :: [Integer] -> [Integer] -> [Integer]
 mergeAsc [] ys = ys
 mergeAsc xs [] = xs
 mergeAsc (x:xs) (y:ys)
-    | x >= y    = y : mergeAsc (x:xs) ys
+    | x == y    = mergeAsc (x:xs) ys
+    | x >  y    = y : mergeAsc (x:xs) ys
     | otherwise = x : mergeAsc xs (y:ys)
 
 -- The order from the exercise description
@@ -74,6 +75,6 @@ isPrime 1 = False
 isPrime 2 = True
 isPrime n = (expmod 2 (n-1) n == 1) && not (n `elem` oddPspTO25)
 
-cntPrimes :: Integer -> Integer
+cntPrimes :: Integer -> Int
 cntPrimes n = length [p | p <- 2:[3,5..n], isPrime p]
 
