@@ -55,7 +55,7 @@ primes13 :: [Integer]
 primes13 = primesTo (2^13)
 
 oddPspTO :: Integer -> Integer -> [Integer]
-oddPspTO a upb = [ n | n <- nub (ns primes13), (expmod a (n-1) n) == 1, not (isPrime' n)]
+oddPspTO a upb = [ n | n <- (ns primes13), (expmod a (n-1) n) == 1, not (isPrime' n)]
     where ns [] = []
           ns (p:ps) = mergeAsc ([p * k * e + p | k <- [1..(div (div upb p) e)]]) (ns ps)
             where e = order a p
