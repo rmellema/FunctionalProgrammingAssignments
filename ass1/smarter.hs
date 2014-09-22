@@ -28,13 +28,12 @@ order' a p = ord a (a `mod` p) 1 p
 primeFactors :: Integer -> [Integer]
 primeFactors 0 = []
 primeFactors 1 = []
-primeFactors n = pF n 2
-    where pF a p
-            | a == p         = [p]
-            | a `mod` p == 0 = p : pF (a `div` p) p 
+primeFactors n = pF n primes13
+    where pF a (p:ps)
+            | a == p        = [p]
+            | a `mod` p == 0 = p : pF (a `div` p) (p:ps) 
             | a < p          = error "Something went Horribly wrong..."
-            | p == 2         = pF a 3
-            | otherwise      = pF a (p+2)
+            | otherwise      = pF a ps
 
 order :: Integer -> Integer -> Integer
 order a p
@@ -48,10 +47,16 @@ order a p
 --oddPspTO a upb
 oddPspTO' a upb = [ n | n <- [3, 5..upb], let p = head (primeFactors n), let q = (n `div` p), (a < p), q `mod` (order a p) == 1, (expmod a (n-1) n) == 1, not (isPrime' n)]
 
+primesTo :: Integer -> [Integer]
+primesTo upb = 2 : [ x | x <- [3,5..upb], isPrime' x]
+
+
+primes13 :: [Integer]
+primes13 = primesTo (2^13)
+
 oddPspTO :: Integer -> Integer -> [Integer]
-oddPspTO a upb = [ n | n <- nub (ns primes),(expmod a (n-1) n) == 1, not (isPrime' n)]
-    where primes  = 2 : [ x | x <- [3,5..(ceiling (sqrt (fromIntegral upb)))], isPrime' x]
-          ns []   = []
+oddPspTO a upb = [ n | n <- nub (ns primes13),(expmod a (n-1) n) == 1, not (isPrime' n)]
+    where ns []   = []
           ns (p:ps) = mergeAsc ([p * k * e + p | k <- [1..(div (div upb p) e)]]) (ns ps)
             where e = order a p
 
