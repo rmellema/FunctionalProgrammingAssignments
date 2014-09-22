@@ -50,13 +50,12 @@ oddPspTO' a upb = [ n | n <- [3, 5..upb], let p = head (primeFactors n), let q =
 primesTo :: Integer -> [Integer]
 primesTo upb = 2 : [ x | x <- [3,5..upb], isPrime' x]
 
-
 primes13 :: [Integer]
 primes13 = primesTo (2^13)
 
 oddPspTO :: Integer -> Integer -> [Integer]
-oddPspTO a upb = [ n | n <- nub (ns primes13),(expmod a (n-1) n) == 1, not (isPrime' n)]
-    where ns []   = []
+oddPspTO a upb = [ n | n <- nub (ns primes13), (expmod a (n-1) n) == 1, not (isPrime' n)]
+    where ns [] = []
           ns (p:ps) = mergeAsc ([p * k * e + p | k <- [1..(div (div upb p) e)]]) (ns ps)
             where e = order a p
 
