@@ -78,3 +78,8 @@ isPrime n = (expmod 2 (n-1) n == 1) && not (n `elem` oddPspTO25)
 cntPrimes :: Integer -> Int
 cntPrimes n = length [p | p <- 2:[3,5..n], isPrime p]
 
+dups :: [Integer] -> Bool
+dups [] = False
+dups (x:xs)
+    | x `elem` xs   = True
+    | otherwise     = dups xs
