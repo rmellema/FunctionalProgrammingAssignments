@@ -22,6 +22,8 @@
 
 \renewcommand{\labelenumi}{\textbf{(\alph{enumi})}}
 
+\DeclareMathOperator*{\ord}{ord}
+
 \title{Functional Programming lab 1}
 \author{Ren\'e Mellema (s2348802) \and Xeryus Stokkel (s2332795)}
 
@@ -42,6 +44,12 @@
 
 \section*{Exercise 2}
 \lstinputlisting[caption=\lstname, label=code:smarter]{smarter.hs}
+
+The proof that $q-1$ must be a multiple of $\ord_a(p)$ is as follows:
+
+$a^{\ord_a(p)} - 1$ is a multiple of $p$, since $a^{\ord_a(p)}$ \textbf{mod} $p=1$. By the definition, it is also the smallest multiple of $p$. This means, that all other numbers $a^x$ for which $a^x$ \textbf{mod} $p=1$ holds must also be multiples of $a^{\ord_a(p)}$ since this is the first value that is one more than $p$. 
+
+So in order for $a^{q-1}$ \textbf{mod} $p=1$ to hold, $a^{q-1}$ must be a multiple of $a^{\ord_a(p)}$. Since we are multiplying, we can leave out the $a$ and thuss follows that $q-1$ must be a multiple of $\ord_a(p)$. 
 
 \begin{enumerate}
 	\item Our \texttt{order} function is defined at line \autoref{func:order} in \autoref{code:smarter}. We tested both \texttt{order} (our function) and \texttt{order'} (the function given in the assignment) for all primes from 3 to $2^n$ for $10 \leq n \leq 16$  and noted the runtime in \autoref{tbl:order}. As we can see our implementation is between 2 and 10 times as fast as the naive implementation.
