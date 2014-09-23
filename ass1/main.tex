@@ -53,50 +53,50 @@
 	\begin{tabular}{r|r|r}
 		$n$ & \texttt{order} runtime (s) & \texttt{order'} runtime (s) \\
 		\hline
-		10 & 0.06 & 0.11 \\
-		11 & 0.12 & 0.31 \\
-		12 & 0.29 & 1.15 \\
-		13 & 0.82 & 4.15 \\
-		14 & 2.60 & 15.81 \\
-		15 & 7.22 & 60.74 \\
-		16 & 23.41 & 227.91
+		10 & 0.10 & 0.11 \\
+		11 & 0.30 & 0.31 \\
+		12 & 1.15 & 1.15 \\
+		13 & 5.34 & 4.15 \\
+		14 & 26.51 & 15.81 \\
+		15 & 150.17 & 60.74 \\
+		16 & 861.89 & 227.91
 	\end{tabular}
 \end{table}
 	\item The function is implemented on line \autoref{func:oddPspTo} of \autoref{code:smarter}. This function generates a list \texttt{ns} which contains all numbers to test. It contains all numbers of $p \cdot (k \cdot \text{ord}_a(p) +1)$ where $p$ is from the set of prime numbers that is smaller than $2^13$ and $k$ is from $\{1, 2 \ldots (\frac{\text{upb}}{p \cdot \text{ord}_a(p)} \}$. These are all the composites that could be a pseudoprimes in the range from 2 to \texttt{upb}.
 	\item See line \autoref{func:isPrime} in \autoref{code:smarter}. This simply tests whether the given $n$ is prime according to Fermat's little theorem and it also checks if it isn't in the list of known 2-pseudoprimes. This is enough to determine whether a number is prime. The list of known 2-pseudoprimes is cached so it needs to be calculated once and then it is very fast for subsequent calls.
-	\item See \autoref{tbl:cntPrimes} for runtimes of the \texttt{cntPrimes} function as defined on line \autoref{func:cntPrimes} in \autoref{code:smarter}
+	\item See \autoref{tbl:cntPrimes} for runtimes of the \texttt{cntPrimes} function as defined on line \autoref{func:cntPrimes} in \autoref{code:smarter}. All of these runtimes would be 781 seconds longer if \texttt{oddPspTO25} didn't cache the pseudoprimes to ($2^25$). If this had to be recalculated for every time cntPrimes would run then the program would be a lot more impractical to run. For these tests we pre-cached \texttt{oddPspTO25} so that none of the tests is affected by it having to precalculate this list.
 
 \begin{table}[h]
 	\centering
-	\caption{Runtimes for \texttt{cntPrimes} for $n=2^k$ where $2 \leq k \leq 25$}
+	\caption{Runtimes for \texttt{cntPrimes n} for $n=2^k$ where $2 \leq k \leq 25$}
 	\label{tbl:cntPrimes}
 	\begin{tabular}{r|r}
-		$n$ & Runtime (s) \\
+		$k$ & Runtime (s) \\
 		\hline
-		 2 &  \\
-		 3 &  \\
-		 4 &  \\
-		 5 &  \\
-		 6 &  \\
-		 7 &  \\
-		 8 &  \\
-		 9 &  \\
-		10 &  \\
-		11 &  \\
-		12 &  \\
-		13 &  \\
-		14 &  \\
-		15 &  \\
-		16 &  \\
-		17 &  \\
-		18 &  \\
-		19 &  \\
-		20 &  \\
-		21 &  \\
-		22 &  \\
-		23 &  \\
-		24 &  \\
-		25 &  \\
+		 2 & 0.01 \\
+		 3 & 0.00 \\
+		 4 & 0.00 \\
+		 5 & 0.00 \\
+		 6 & 0.00 \\
+		 7 & 0.01 \\
+		 8 & 0.01 \\
+		 9 & 0.03 \\
+		10 & 0.04 \\
+		11 & 0.06 \\
+		12 & 0.12 \\
+		13 & 0.22 \\
+		14 & 0.42 \\
+		15 & 0.88 \\
+		16 & 1.86 \\
+		17 & 3.99 \\
+		18 & 8.41 \\
+		19 & 18.32 \\
+		20 & 39.67 \\
+		21 & 79.12 \\
+		22 & 153.51 \\
+		23 & 310.00 \\
+		24 & 645.14 \\
+		25 & 1341.68 \\
 	\end{tabular}
 
 \end{table}
