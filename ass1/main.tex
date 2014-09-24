@@ -37,7 +37,7 @@
 	\item From $k=12$ onwards the processing time is noticeable, the processing time is then 0.26s compared to 0.08s for $k=11$. At $k=16$ we are just before the minute barrier (46.33s) while for $k=17$ the time it takes to compute has crossed the 3 minute barrier (190.41s). For $k=18$ it took 669.4s, at this point we decided to not run for $k=19,k=20$ as the computing time is clearly exponential and we have more excercises to do.
 	\item Time for calculations is still about as poor as for this function as it does not need to do the \texttt{isPrime} test if the Fermat's theorem test has failed. This means that computation time can be cut down as \texttt{isPrime} is very expensive. The length of the list of pseudoprimes does grow exponentially with larger $k$ in the same way as it did with computing time in the previous question.
 	\item This code is also available at the bottom of the exercise.
-	\item The table with the number of 2-pseudoprimes on the interval \lstinline{[3..2^k]} for $2 \le k \le 22$ can be found in \autoref{tab:exe}
+	\item The table with the number of 2-pseudoprimes on the interval \lstinline{[3..2^k]} for $2 \le k \le 22$ can be found in \autoref{tbl:exe}
 \end{enumerate}
 
 \begin{table}[h]
@@ -63,8 +63,8 @@
 		15 & 45  \\
 		16 & 64  \\
 		17 & 89  \\
-		18 &     \\
-		19 &     \\
+		18 & 124 \\
+		19 & 175 \\
 		20 &     \\
 		21 &     \\
 		22 &     \\
