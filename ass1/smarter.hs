@@ -37,17 +37,16 @@ order' a p = ord a (a `mod` p) 1 p
 primeFactors :: Integer -> [Integer]
 primeFactors 0 = []
 primeFactors 1 = []
-primeFactors n = pF n (primesTo (div n 2))
-    where pF a (p:ps)
-            | a == p        = [p]
-            | a `mod` p == 0 = p : pF (a `div` p) (p:ps) 
-            | a < p          = error "Something went Horribly wrong..."
-            | otherwise      = pF a ps
+primeFactors n = pF n 2
+    where pF a p
+              | a == p         = [p]
+              | a `mod` p == 0 = p : pF (a `div` p) p 
+              | a < p          = error "Something went Horribly wrong..."
+              | p == 2         = pF a 3
+              | otherwise      = pF a (p+2)
 
 order :: Integer -> Integer -> Integer --( \label{func:order} )--
-order a p
-    | null orders   = -1
-    | otherwise     = head orders
+order a p = head orders
    where factors = primeFactors (p-1)
          candidates = prodPSet factors [1]
          orders = [ x | x <- candidates, expmod a x p == 1]
@@ -62,6 +61,9 @@ primesTo upb = 2: (pT upb [3,5..upb])
 
 primes13 :: [Integer]
 primes13 = primesTo (2^13)
+
+primes25 :: [Integer]
+primes25 = primesTo (2^25)
 
 oddPspTO :: Integer -> Integer -> [Integer] --( \label{func:oddPspTo} )--
 oddPspTO a upb = [ n | n <- (ns primes13), (expmod a (n-1) n) == 1, not (isPrime' n)]
