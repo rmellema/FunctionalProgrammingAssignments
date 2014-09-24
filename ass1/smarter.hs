@@ -54,7 +54,7 @@ order a p = head orders
          prodPSet (f:fs) (p:ps) = prodPSet fs (mergeAsc (p:ps) (map (f*) (p:ps)))
 
 primesTo :: Integer -> [Integer]
-primesTo upb = 2: (pT upb [3,5..upb])
+primesTo upb = (pT upb [3,5..upb])
     where pT upb (c:cs)
             | c >= (upb `div` 2) = (c:cs)
             | otherwise = c:pT upb ([x | x <- cs, x `mod` c /= 0])
