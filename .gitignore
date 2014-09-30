@@ -19,3 +19,6 @@ cabal.config
 
 # vim
 *.swp
+
+# remove .zips
+*.zip
