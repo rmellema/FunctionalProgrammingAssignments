@@ -1,4 +1,6 @@
-sudoku :: [String]
+type Sudoku = [String]
+
+sudoku :: Sudoku
 sudoku = [ "003020600",
            "900305001",
            "001806400",
@@ -16,36 +18,37 @@ isValidLine (x:xs)
     | x `elem` xs   = False
     | otherwise     = isValidLine xs
 
-isValidColumn :: [String] -> Int -> Bool
+isValidColumn :: Sudoku -> Int -> Bool
 isValidColumn [] _     = True
 isValidColumn (x:xs) n = isValidLine [cs !! n | cs <- (x:xs)]
 
-isValidRow :: [String] -> Int -> Bool
+isValidRow :: Sudoku -> Int -> Bool
 isValidRow [] _     = True
 isValidRow (x:xs) n = isValidLine ((x:xs) !! n)
 
-isValidSudoku :: [String] -> Bool
-isValidSudoku s = and (concat (map isValidLine s) (map (isValidColumn s) [1..9]))
+isValidSudoku :: Sudoku -> Bool
+isValidSudoku s = and ((map isValidLine s) ++ (map (isValidColumn s) [1..9]))
 
 isFilledLine :: String -> Bool
-isFilledLine [] = True
-isFilledLine (x:xs)
-    | x == '0'  = False
-    | otherwise = isFilledLine xs
+isFilledLine = not . elem '0'
 
-isFilledSudoku :: [String] -> Bool
-isFilledSudoku s = and (map isFilledLine s)
+isFilledSudoku :: Sudoku -> Bool
+isFilledSudoku = and . map isFilledLine
 
-repZeroWith :: String -> Char -> String
-repZeroWith [] _    = []
-repZeroWith (x:xs) n
-    | x == '0'      = n : xs
-    | otherwise     = x : repZeroWith xs n
+replace :: (Eq a) => a -> a -> [a] -> [a]
+replace _ _ []     = []
+replace v w (x:xs)
+    | v == x    = w : xs
+    | otherwise = x : replace v w xs
+
+replaceZero :: Char -> String -> String
+replaceZero = replace '0'
 
 repLines :: String -> [String]
 repLines [] = []
 repLines xs 
-    | '0' `elem` xs  = concat (map repLines (filter isValidLine (map (repZeroWith xs) ['1'..'9'])))
+    | '0' `elem` xs  = concat $ map repLines
+                            $ filter isValidLine [replaceZero x xs | x <- ['1'..'9']]
     | otherwise      = [xs]
 
 allLines :: String -> [String]
