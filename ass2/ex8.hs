@@ -64,9 +64,10 @@ minimalSudoku sud = minSud sud 0 0
           minSud sud 9 _ = sud
           minSud sud r 9 = minSud sud (r+1) 0
           minSud sud r c
-            | (sud !! r) !! c == '0' = minSud sud r (c+1)
-            | isCorrectSudoku nextSud && (nextCount > nextCount') = nextSud
-            | otherwise              = nextSud'
+            | (sud !! r) !! c == '0'                                = nextSud'
+            | isCorrectSudoku nextSud && (nextCount > nextCount')   = nextSud
+            | isCorrectSudoku nextSud'                              = nextSud'
+            | otherwise                                             = sud
             where nextSud    = minSud (replaceAt2D sud r c '0') r (c+1)
                   nextSud'   = minSud sud r (c+1)
                   nextCount  = sum $ map (countZeros 0) nextSud
