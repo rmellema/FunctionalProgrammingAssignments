@@ -38,22 +38,40 @@ validNumberInSudoku sud num row col =
           eRow = bRow + 2
           bCol = col - (col `mod` 3)
 
-solve :: Sudoku -> Int -> Int -> [Sudoku]
-solve [] _ _  = []
-solve sud 9 _ = [sud]
-solve sud r 9 = solve sud (r+1) 0
-solve sud r c
-    | (sud !! r) !! c /= '0' = solve sud r (c+1)
-    | otherwise              = concat $ map (\x -> solve x r (c+1)) sols
-      where sols = map (replaceAt2D sud r c) (filter (\x -> validNumberInSudoku sud x r c) ['1'..'9'])
-    
 
 solutionsSudoku :: Sudoku -> [Sudoku]
 solutionsSudoku []      = []
 solutionsSudoku sudoku  = solve sudoku 0 0
+    where solve [] _ _  = []
+          solve sud 9 _ = [sud]
+          solve sud r 9 = solve sud (r+1) 0
+          solve sud r c
+            | (sud !! r) !! c /= '0' = solve sud r (c+1)
+            | otherwise              = concat $ map (\x -> solve x r (c+1)) sols
+            where sols = map (replaceAt2D sud r c)
+                             (filter (\x -> validNumberInSudoku sud x r c) ['1'..'9'])
+    
 
 isCorrectSudoku :: Sudoku -> Bool
 isCorrectSudoku sud = isCorrect (solutionsSudoku sud)
     where isCorrect []      = False
           isCorrect [x]     = True
           isCorrect (x:xs)  = False
+
+minimalSudoku :: Sudoku -> Sudoku
+minimalSudoku sud = minSud sud 0 0
+    where minSud [] _ _  = []
+          minSud sud 9 _ = sud
+          minSud sud r 9 = minSud sud (r+1) 0
+          minSud sud r c
+            | (sud !! r) !! c == '0' = minSud sud r (c+1)
+            | isCorrectSudoku nextSud && (nextCount > nextCount') = nextSud
+            | otherwise              = nextSud'
+            where nextSud    = minSud (replaceAt2D sud r c '0') r (c+1)
+                  nextSud'   = minSud sud r (c+1)
+                  nextCount  = sum $ map (countZeros 0) nextSud
+                  nextCount' = sum $ map (countZeros 0) nextSud'
+          countZeros n []    = n
+          countZeros n (x:xs) 
+            | x == '0'   = countZeros (n+1) xs 
+            | otherwise  = countZeros n xs 
