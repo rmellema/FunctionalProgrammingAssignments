@@ -11,6 +11,9 @@ sudoku = [ "003020600",
            "800203009",
            "005010300" ]
 
+putSudoku :: Sudoku -> IO ()
+putSudoku = putStr . unlines
+
 isFilledLine :: String -> Bool
 isFilledLine = not . elem '0'
 
