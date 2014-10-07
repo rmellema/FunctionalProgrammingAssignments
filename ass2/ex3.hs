@@ -11,4 +11,4 @@ merge (x:xs) (y:ys)
 
 distinctPowers :: Integer -> Int -> [Integer]
 distinctPowers m n =
-	foldr merge [] ((map (take n) (map powers [2..m])))
+	foldr merge [] ((map (take (n-1)) (map powers [2..m])))

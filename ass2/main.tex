@@ -1,0 +1,76 @@
+\documentclass[a4paper]{article}
+
+\usepackage{fullpage}
+\usepackage{listings}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+\definecolor{light-gray}{gray}{0.95}
+\lstset{tabsize=4,
+	breaklines=true,
+	breakatwhitespace=true,
+	basicstyle=\scriptsize,
+	language={Haskell},
+	showstringspaces=false,
+	numberstyle=\tiny,
+	escapeinside={--(}{)--},
+	numbers=left,
+	backgroundcolor=\color{light-gray},
+	frame=single,
+}
+
+\title{Functional Programming lab 2}
+\author{Ren\'e Mellema (s23488002) \and Xeryus Stokkel (s233279)}
+
+\begin{document}
+
+\maketitle
+
+\section{Smallest multiple}
+\lstinputlisting[caption=\lstname, label={code:ex1}]{ex1.hs}
+Runtime: 0.01s
+
+\section{Sum of multiples}
+\lstinputlisting[caption=\lstname, label={code:ex2}]{ex2.hs}
+Runtime: 1.42s
+
+\section{Distinct powers}
+\lstinputlisting[caption=\lstname, label={code:ex3}]{ex3.hs}
+
+\section{Palindromic composites}
+\lstinputlisting[caption=\lstname, label={code:ex4}]{ex4.hs}
+Runtime: 0.95s
+
+\section{Last n digits}
+\lstinputlisting[caption=\lstname, label={code:ex5}]{ex5.hs}
+Runtime: 3.74s
+
+\section{Factorial sums}
+\lstinputlisting[caption=\lstname, label={code:ex6}]{ex6.hs}
+
+\section{Repetitive reciprocals}
+\lstinputlisting[caption=\lstname, label={code:ex7}]{ex7.hs}
+
+\section{Sudoku solver}
+\lstinputlisting[caption=\lstname, label={code:ex8}]{ex8.hs}
+Runtime on the given Sudoku: 0.08s
+
+We obtained a runtime of 2.26s for the following Sudoku (which is considered very hard):
+\begin{lstlisting}
+["020060005",
+ "300009800",
+ "000000340",
+ "000900070",
+ "800050001",
+ "060003000",
+ "089000000",
+ "001200006",
+ "400010050"]
+\end{lstlisting}
+the runtime is 2.26s
+
+\section{Minimal Sudoku}
+This code is in \autoref{code:ex8}
+
+\end{document}
