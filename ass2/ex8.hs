@@ -50,7 +50,6 @@ solutionsSudoku sudoku  = solve sudoku 0 0
             | otherwise              = concat $ map (\x -> solve x r (c+1)) sols
             where sols = map (replaceAt2D sud r c)
                              (filter (\x -> validNumberInSudoku sud x r c) ['1'..'9'])
-    
 
 isCorrectSudoku :: Sudoku -> Bool
 isCorrectSudoku sud = isCorrect (solutionsSudoku sud)
