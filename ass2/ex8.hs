@@ -60,8 +60,7 @@ isCorrectSudoku sud = isCorrect (solutionsSudoku sud)
 
 minimalSudoku :: Sudoku -> Sudoku
 minimalSudoku sud = minSud sud 0 0
-    where minSud [] _ _  = []
-          minSud sud 9 _ = sud
+    where minSud sud 9 _ = sud
           minSud sud r 9 = minSud sud (r+1) 0
           minSud sud r c
             | (sud !! r) !! c == '0'                                = nextSud'
