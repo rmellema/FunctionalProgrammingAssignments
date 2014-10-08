@@ -54,6 +54,10 @@ evalExpr (Val n) _      = n
 evalExpr (Var n) v      = sure (lookup n v)
     where sure (Just b) = b
 evalExpr (e1 :+: e2) v  = evalExpr e1 v + evalExpr e2 v
+evalExpr (e1 :-: e2) v  = evalExpr e1 v - evalExpr e2 v
+evalExpr (e1 :*: e2) v  = evalExpr e1 v * evalExpr e2 v
+evalExpr (e1 :/: e2) v  = evalExpr e1 v `div` evalExpr e2 v
+evalExpr (e1 :%: e2) v  = evalExpr e1 v `mod` evalExpr e2 v
 
 
 
