@@ -1,10 +1,3 @@
-isSubsequence :: (Eq a) => [a] -> [a] -> Bool
-isSubsequence [] _ = True
-isSubsequence _ [] = False
-isSubsequence (x:xs) (y:ys)
-    | x == y = snd (unzip(zip (x:xs) (y:ys))) == (x:xs) || isSubsequence (x:xs) ys
-    | otherwise = isSubsequence (x:xs) ys
-
 divide :: Int -> Int -> [Int]
 divide _ 0 = []
 divide n m
@@ -17,7 +10,7 @@ takeSubsequence ns start length = take length $ drop start ns
 testBetas :: [Int] -> Int -> Maybe Int
 testBetas ns limit
     | beta == [] = Nothing
-    | otherwise  = Just (head $ beta)
+    | otherwise  = Just (head beta)
     where isReciprocal xs l = takeSubsequence xs 0 l == takeSubsequence xs l l
           beta = filter (\x -> (isReciprocal ns x)) [1..limit]
 
@@ -26,7 +19,7 @@ testAlphas ns limit betaLimit
     | possibleBetas == [] = 0
     | otherwise           = sure (head (possibleBetas))
     where removeAlphas  = map (\x -> drop x filterList) [0..limit]
-          possibleBetas = filter (\x -> maybe False (\y -> True) x) (map (\x -> testBetas x betaLimit) (filter (\x -> x /= []) removeAlphas))
+          possibleBetas = filter (\x -> maybe False (\y -> True) x) (map (\x -> testBetas x betaLimit) (filter (not.null) removeAlphas))
           sure (Just b) = b
           filterList    = dropWhile (<=0) ns
 
