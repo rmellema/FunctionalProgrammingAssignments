@@ -69,3 +69,17 @@ intEvalExpr (e1 :*: e2) v  = intEvalExpr e1 v * intEvalExpr e2 v
 intEvalExpr (e1 :/: e2) v  = intEvalExpr e1 v `div` intEvalExpr e2 v
 intEvalExpr (e1 :%: e2) v  = intEvalExpr e1 v `mod` intEvalExpr e2 v
 
+canSimplify :: Expr -> Bool
+canSimplify (Val _)           = False
+canSimplify (Var _)           = False
+canSimplify (Val n :+: Val m) = True
+canSimplify (e1 :+: e2)       = canSimplify e1 || canSimplify e2
+canSimplify (Val n :-: Val m) = True
+canSimplify (e1 :-: e2)       = canSimplify e1 || canSimplify e2
+canSimplify (Val n :*: Val m) = True
+canSimplify (e1 :*: e2)       = canSimplify e1 || canSimplify e2
+canSimplify (Val n :/: Val m) = True
+canSimplify (e1 :/: e2)       = canSimplify e1 || canSimplify e2
+canSimplify (Val n :%: Val m) = True
+canSimplify (e1 :%: e2)       = canSimplify e1 || canSimplify e2
+
