@@ -1,7 +1,6 @@
-module Expression where
-import Data.List
-
-type Name = String
+module Expression(Expr, vars, evalExpr) where
+import Types
+import Valuation
 
 data Expr =
      Val Integer
@@ -49,3 +48,12 @@ vars :: Expr -> [Name]
 vars (Val _) = []
 vars (Var n) = [n]
 vars expr    = vars (leftHand expr) `merge` vars (rightHand expr)
+
+evalExpr :: Expr -> Valuation -> Integer
+evalExpr (Val n) _      = n
+evalExpr (Var n) v      = sure (lookup n v)
+    where sure (Just b) = b
+evalExpr (e1 :+: e2) v  = evalExpr e1 v + evalExpr e2 v
+
+
+
