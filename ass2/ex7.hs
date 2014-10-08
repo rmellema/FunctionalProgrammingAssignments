@@ -15,30 +15,23 @@ takeSubsequence :: [a] -> Int -> Int -> [a]
 takeSubsequence ns start length = take length $ drop start ns
 
 testBetas :: [Int] -> Int -> Maybe Int
-testBetas ns max
+testBetas ns limit
     | beta == [] = Nothing
     | otherwise  = Just (head $ beta)
     where isReciprocal xs l = takeSubsequence xs 0 l == takeSubsequence xs l l
-          beta = filter (\x -> (isReciprocal ns x)) [1..max]
+          beta = filter (\x -> (isReciprocal ns x)) [1..limit]
 
-testAlphas :: [Int] -> Int -> [Int]
-testAlphas ns max
-    | possibleBetas == [] = []
-    | otherwise           = [sure (snd $ head (possibleBetas))] -- Dit is waar ik ben gebleven, possibleBetas is een tupple: (start beta, grote beta)
-    where removeAlphas = map (\x -> (x, drop x ns)) [0..max]
-          possibleBetas = filter (\x -> maybe False (\y -> True) (snd x)) (map (\x -> (x, testBetas (snd x) max)) removeAlphas)
+testAlphas :: [Int] -> Int -> Int -> Int
+testAlphas ns limit betaLimit
+    | possibleBetas == [] = 0
+    | otherwise           = sure (head (possibleBetas))
+    where removeAlphas  = map (\x -> drop x filterList) [0..limit]
+          possibleBetas = filter (\x -> maybe False (\y -> True) x) (map (\x -> testBetas x betaLimit) (filter (\x -> x /= []) removeAlphas))
           sure (Just b) = b
+          filterList    = dropWhile (<=0) ns
 
--- filterBeta :: [Int] -> [Int]
-
-
-foo :: [Int] -> Int -> Int -> (Int, Int)
-foo digits a b
-    | isSubsequence beta (drop b digits) = foo digits a (max a (b+1))
-    | otherwise                          = foo digits (a+1) (max (a+1) b)
-    where alpha  = take a digits
-          beta   = drop a $ take b digits
-
-makeAlphaBeta :: Int -> ([Int], [Int])
-makeAlphaBeta n = ([0], [0])
-    where digits = tail $ divide 1 n
+repetitiveReciprocal :: Int -> Int -> Int
+repetitiveReciprocal m n = fst (foldr (largestReciprocal) (1, 1) reciprocals)
+	where
+		largestReciprocal x y = (if snd x < snd y then y else x)
+		reciprocals = map (\x -> (x, testAlphas (divide 1 x) 10 1000)) [m..n]
