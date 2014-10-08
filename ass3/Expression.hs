@@ -70,16 +70,45 @@ intEvalExpr (e1 :/: e2) v  = intEvalExpr e1 v `div` intEvalExpr e2 v
 intEvalExpr (e1 :%: e2) v  = intEvalExpr e1 v `mod` intEvalExpr e2 v
 
 canSimplify :: Expr -> Bool
-canSimplify (Val _)           = False
-canSimplify (Var _)           = False
-canSimplify (Val n :+: Val m) = True
-canSimplify (e1 :+: e2)       = canSimplify e1 || canSimplify e2
-canSimplify (Val n :-: Val m) = True
-canSimplify (e1 :-: e2)       = canSimplify e1 || canSimplify e2
-canSimplify (Val n :*: Val m) = True
-canSimplify (e1 :*: e2)       = canSimplify e1 || canSimplify e2
-canSimplify (Val n :/: Val m) = True
-canSimplify (e1 :/: e2)       = canSimplify e1 || canSimplify e2
-canSimplify (Val n :%: Val m) = True
-canSimplify (e1 :%: e2)       = canSimplify e1 || canSimplify e2
+canSimplify (Val _) = False
+canSimplify (Var _) = False
+canSimplify e       = null $ vars e
 
+simplifyExpr :: Expr -> Expr
+simplifyExpr (Val n) = Val n
+simplifyExpr (Var n) = Var n
+simplifyExpr e@(e1 :+: e2)
+    | canSimpe1 && canSimpe2 = Val (evalExpr e [])
+    | canSimpe1              = Val (evalExpr e1 []) :+: e2
+    | canSimpe2              = e1 :+: Val (evalExpr e2 [])
+    | otherwise              = e
+    where canSimpe1 = canSimplify e1
+          canSimpe2 = canSimplify e2
+simplifyExpr e@(e1 :-: e2)
+    | canSimpe1 && canSimpe2 = Val (evalExpr e [])
+    | canSimpe1              = Val (evalExpr e1 []) :-: e2
+    | canSimpe2              = e1 :-: Val (evalExpr e2 [])
+    | otherwise              = e
+    where canSimpe1 = canSimplify e1
+          canSimpe2 = canSimplify e2
+simplifyExpr e@(e1 :*: e2)
+    | canSimpe1 && canSimpe2 = Val (evalExpr e [])
+    | canSimpe1              = Val (evalExpr e1 []) :*: e2
+    | canSimpe2              = e1 :*: Val (evalExpr e2 [])
+    | otherwise              = e
+    where canSimpe1 = canSimplify e1
+          canSimpe2 = canSimplify e2
+simplifyExpr e@(e1 :/: e2)
+    | canSimpe1 && canSimpe2 = Val (evalExpr e [])
+    | canSimpe1              = Val (evalExpr e1 []) :/: e2
+    | canSimpe2              = e1 :/: Val (evalExpr e2 [])
+    | otherwise              = e
+    where canSimpe1 = canSimplify e1
+          canSimpe2 = canSimplify e2
+simplifyExpr e@(e1 :%: e2)
+    | canSimpe1 && canSimpe2 = Val (evalExpr e [])
+    | canSimpe1              = Val (evalExpr e1 []) :%: e2
+    | canSimpe2              = e1 :%: Val (evalExpr e2 [])
+    | otherwise              = e
+    where canSimpe1 = canSimplify e1
+          canSimpe2 = canSimplify e2
