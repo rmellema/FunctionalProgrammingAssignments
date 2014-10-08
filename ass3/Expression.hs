@@ -1,6 +1,7 @@
 module Expression(Expr, vars, evalExpr) where
 import Types
 import Valuation
+import Data.Char
 
 data Expr =
      Val Integer
@@ -112,3 +113,35 @@ simplifyExpr e@(e1 :%: e2)
     | otherwise              = e
     where canSimpe1 = canSimplify e1
           canSimpe2 = canSimplify e2
+
+--tokenize :: String -> [String]
+tokenize [] = []
+tokenize (c:str) 
+    | isAlpha c = (c : takeWhile isAlpha str) : tokenize (dropWhile isAlpha str)
+    | isDigit c = (c : takeWhile isDigit str) : tokenize (dropWhile isDigit str)
+    | isOper  c = [c] : tokenize str
+    | isSpace c = tokenize (dropWhile isSpace str)
+    | isParen c = [c] : tokenize str
+    | otherwise = error ("Unrecognised character: " ++ [c])
+
+isOper :: Char -> Bool
+isOper c = elem c "+-*/%"
+
+isParen :: Char -> Bool
+isParen c = elem c "()"
+
+toExpr :: String -> Expr
+toExpr = Var
+
+parseF :: [String] -> Expr
+parseF [e]
+    | isDigit (head e)  = Val (read e)
+    | isAlpha (head e)  = Var e
+    | otherwise         = error ("Malformed expression: " ++ e)
+parseF (e:es) = Var e
+
+parseT :: [String] -> Expr
+parseT (e:es)
+    | e == "("  = (parseF e') (parseT' drop (length e' +1) es)
+    | otherwise
+    where e' = dropwhile (/= ")") es
