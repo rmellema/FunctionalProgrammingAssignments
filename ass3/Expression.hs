@@ -131,7 +131,7 @@ isParen :: Char -> Bool
 isParen c = elem c "()"
 
 toExpr :: String -> Expr
-toExpr = Var
+toExpr s = parseE (tokenize s)
 
 -- Finds a sub-expression, is very naive so doesn't support nested sub-expressions
 findSubExpr :: [String] -> [String]
@@ -142,28 +142,30 @@ findSubExpr (s:ss) = takeWhile ( /= ")" ) (s:ss)
 -- General parser
 parseE :: [String] -> Expr
 parseE [] = Val 0
-parseE [e] = parseF [e]
-parseE (e:es)
-    | e == "(" = parseT (parseE leftSub) (drop (1 + length leftSub ) es)
-    where leftSub = findSubExpr es
+parseE (e:es) = parseT (fst leftSub) (snd leftSub)
+    where leftSub = parseF (e:es)
 
--- Parse atoms (but check if the atom is a subexpression)
-parseF :: [String] -> Expr
-parseF [e] -- Single element, so a variable or a literal
-    | isDigit (head e) = Val (read e)
-    | isAlpha (head e) = Var e
-    | otherwise        = error ("Malformed expression: " ++ e)
-parseF (e:es) = parseE (e:es) -- Lists are sub expressions which can be parsed with the general expression parser
+-- Parse + and -
+parseE' :: Expr -> [String] -> Expr
+parseE' expr (e:es) = expr
 
+-- Parse * / % + -
 parseT :: Expr -> [String] -> Expr
--- From here on needs updating
+parseT expr [] = expr
 parseT expr (e:es)
-    | e == "("         = (parseT' (parseF e') (drop (length e' +1) es))
-    | isDigit (head e) = Val (read e :: Integer)
-    | otherwise        = Var e
-    where e' = dropWhile (/= ")") es
+    | e == "*" = parseT ((expr) :*: fst rightSub) (snd rightSub)
+    | e == "/" = parseT ((expr) :/: fst rightSub) (snd rightSub)
+    | e == "%" = parseT ((expr) :%: fst rightSub) (snd rightSub)
+    | e == "+" = parseT ((expr) :+: fst rightSub) (snd rightSub)
+    | e == "-" = parseT ((expr) :-: fst rightSub) (snd rightSub)
+    | otherwise = error ("Invalid operator: " ++ e)
+    where rightSub = parseF es
 
-parseT' :: Expr -> [String] -> Expr
-parseT' expr (e:es)
-    | e == "*" = expr :*: parseT' expr es
-    | otherwise = expr
+-- Parse fact (but check if the fact is a subexpression)
+-- Tuple returned is the parsed expression; remaining tokens to parse
+parseF :: [String] -> (Expr, [String])
+parseF (e:es)
+    | isDigit (head e) = (Val (read e :: Integer), es)
+    | isAlpha (head e) = (Var e, es)
+    | e == "(" = (parseE subexpression, drop (1 + length subexpression) es)
+    where subexpression = findSubExpr (es)
