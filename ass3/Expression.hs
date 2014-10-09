@@ -27,7 +27,7 @@ merge [] ys = ys
 merge (x:xs) (y:ys)
     | x <  y    = x : merge xs (y:ys)
     | x == y    = x : merge xs ys
-    | otherwise = y : merge (x:xs) ys 
+    | otherwise = y : merge (x:xs) ys
 
 leftHand :: Expr -> Expr
 leftHand (l :+: _) = l
@@ -116,7 +116,7 @@ simplifyExpr e@(e1 :%: e2)
 
 --tokenize :: String -> [String]
 tokenize [] = []
-tokenize (c:str) 
+tokenize (c:str)
     | isAlpha c = (c : takeWhile isAlpha str) : tokenize (dropWhile isAlpha str)
     | isDigit c = (c : takeWhile isDigit str) : tokenize (dropWhile isDigit str)
     | isOper  c = [c] : tokenize str
@@ -133,15 +133,37 @@ isParen c = elem c "()"
 toExpr :: String -> Expr
 toExpr = Var
 
-parseF :: [String] -> Expr
-parseF [e]
-    | isDigit (head e)  = Val (read e)
-    | isAlpha (head e)  = Var e
-    | otherwise         = error ("Malformed expression: " ++ e)
-parseF (e:es) = Var e
+-- Finds a sub-expression, is very naive so doesn't support nested sub-expressions
+findSubExpr :: [String] -> [String]
+findSubExpr [] = []
+findSubExpr [s] = [s]
+findSubExpr (s:ss) = takeWhile ( /= ")" ) (s:ss)
 
-parseT :: [String] -> Expr
-parseT (e:es)
-    | e == "("  = (parseF e') (parseT' drop (length e' +1) es)
-    | otherwise
-    where e' = dropwhile (/= ")") es
+-- General parser
+parseE :: [String] -> Expr
+parseE [] = Val 0
+parseE [e] = parseF [e]
+parseE (e:es)
+    | e == "(" = parseT (parseE leftSub) (drop (1 + length leftSub ) es)
+    where leftSub = findSubExpr es
+
+-- Parse atoms (but check if the atom is a subexpression)
+parseF :: [String] -> Expr
+parseF [e] -- Single element, so a variable or a literal
+    | isDigit (head e) = Val (read e)
+    | isAlpha (head e) = Var e
+    | otherwise        = error ("Malformed expression: " ++ e)
+parseF (e:es) = parseE (e:es) -- Lists are sub expressions which can be parsed with the general expression parser
+
+parseT :: Expr -> [String] -> Expr
+-- From here on needs updating
+parseT expr (e:es)
+    | e == "("         = (parseT' (parseF e') (drop (length e' +1) es))
+    | isDigit (head e) = Val (read e :: Integer)
+    | otherwise        = Var e
+    where e' = dropWhile (/= ")") es
+
+parseT' :: Expr -> [String] -> Expr
+parseT' expr (e:es)
+    | e == "*" = expr :*: parseT' expr es
+    | otherwise = expr
