@@ -109,7 +109,8 @@ parseE [] = Val 0
 parseE (e:es) = parseT (fst leftSub) (snd leftSub)
     where leftSub = parseF (e:es)
 
--- Parse * / % + -
+-- Parse the different operators, (loosely) following the arithmetic priority
+-- rules
 parseT :: Expr -> [String] -> Expr
 parseT expr [] = expr
 parseT expr (e:es)
