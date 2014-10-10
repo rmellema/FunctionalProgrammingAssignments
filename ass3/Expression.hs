@@ -1,4 +1,4 @@
-module Expression(Expr, vars, evalExpr, toExpr) where
+module Expression(Expr, vars, evalExpr, toExpr, module Types, Valuation) where
 import Types
 import Valuation
 import Data.Char
@@ -82,8 +82,7 @@ tokenize (c:str)
 
 -- Finds a sub-expression in an expression, does not return the closing bracket
 findSubExpr :: [String] -> [String]
-findSubExpr [] = []
-findSubExpr (s:ss) = (fse 0 (s:ss))
+findSubExpr = fse 0
     where fse :: Integer -> [String] -> [String]
           fse i [] = []
           fse i (e:es)
