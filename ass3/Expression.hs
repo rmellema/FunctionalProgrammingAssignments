@@ -175,17 +175,22 @@ simplifyExpr e@(e1 :+: e2)
     | canSimplify e1         = Val (evalExpr e1 []) :+: e2
     | canSimplify e2         = e1 :+: Val (evalExpr e2 [])
     | otherwise              = e
-simplifyExpr e@(e1 :-: (Val 0))= simplifyExpr e1
+simplifyExpr (e :-: (Val 0)) = simplifyExpr e
 simplifyExpr e@(e1 :-: e2)
     | canSimplify e          = Val (evalExpr e [])
     | canSimplify e1         = Val (evalExpr e1 []) :-: e2
     | canSimplify e2         = e1 :-: Val (evalExpr e2 [])
     | otherwise              = e
+simplifyExpr (e :*: (Val 0)) = Val 0
+simplifyExpr ((Val 0) :*: e) = Val 0
+simplifyExpr (e :*: (Val 1)) = simplifyExpr e
+simplifyExpr ((Val 1) :*: e) = simplifyExpr e
 simplifyExpr e@(e1 :*: e2)
     | canSimplify e          = Val (evalExpr e [])
     | canSimplify e1         = Val (evalExpr e1 []) :*: e2
     | canSimplify e2         = e1 :*: Val (evalExpr e2 [])
     | otherwise              = e
+simplifyExpr (e :/: (Val 1)) = simplifyExpr e
 simplifyExpr e@(e1 :/: e2)
     | canSimplify e          = Val (evalExpr e [])
     | canSimplify e1         = Val (evalExpr e1 []) :/: e2
