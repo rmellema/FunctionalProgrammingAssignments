@@ -24,13 +24,13 @@ instance Show Expr where
 -- Internal show function to cut down on lines in show inheritance
 intShow :: Expr -> Expr -> String -> String
 intShow (Val l) (Val r) op = show l ++ op ++ show r
-intShow (Val l) (Var r) op = show l ++ op ++ show r
+intShow (Val l) (Var r) op = show l ++ op ++      r
 intShow (Val l) (    r) op = show l ++ op ++ "(" ++ show r ++ ")"
-intShow (Var l) (Val r) op = show l ++ op ++ show r
-intShow (Var l) (Var r) op = show l ++ op ++ show r
-intShow (Var l) (    r) op = show l ++ op ++ "(" ++ show r ++ ")"
+intShow (Var l) (Val r) op =      l ++ op ++ show r
+intShow (Var l) (Var r) op =      l ++ op ++      r
+intShow (Var l) (    r) op =      l ++ op ++ "(" ++ show r ++ ")"
 intShow (    l) (Val r) op = "(" ++ show l ++ ")" ++ op ++ show r
-intShow (    l) (Var r) op = "(" ++ show l ++ ")" ++ op ++ show r
+intShow (    l) (Var r) op = "(" ++ show l ++ ")" ++ op ++      r
 intShow (    l) (    r) op = "(" ++ show l ++ ")" ++ op ++ "(" ++ show r ++ ")"
 
 -- Merge two sorted lists into a single sorted list
@@ -128,7 +128,9 @@ parseF :: [String] -> (Expr, [String])
 parseF (e:es)
     | isDigit (head e) = (Val (read e :: Integer), es)
     | isAlpha (head e) = (Var e, es)
-    | e == "(" = (parseE subexpression, drop (1 + length subexpression) es)
+    | e == "("         = (parseE subexpression,
+        drop (1 + length subexpression) es)
+    | otherwise        = error ("Invalid atom: " ++ e)
     where subexpression = findSubExpr (es)
 
 -- Helper functions for the parser
