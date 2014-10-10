@@ -21,6 +21,7 @@ instance Show Expr where
     show (e1 :/: e2) = "(" ++ show e1 ++ " / " ++ show e2 ++ ")"
     show (e1 :%: e2) = "(" ++ show e1 ++ " % " ++ show e2 ++ ")"
 
+-- Merge two sorted lists into a single sorted list
 merge :: Ord a => [a] -> [a] -> [a]
 merge xs [] = xs
 merge [] ys = ys
@@ -29,6 +30,8 @@ merge (x:xs) (y:ys)
     | x == y    = x : merge xs ys
     | otherwise = y : merge (x:xs) ys
 
+-- Finds all unique variable names in an expression and returns them as a list
+-- of names
 vars :: Expr -> [Name]
 vars (Val _) = []
 vars (Var n) = [n]
@@ -38,16 +41,19 @@ vars (l :*: r) = vars l `merge` vars r
 vars (l :/: r) = vars l `merge` vars r
 vars (l :%: r) = vars l `merge` vars r
 
+-- Checks whether all names exist in a valuation
 isComplete :: [Name] -> Valuation -> Bool
 isComplete [] _  = True
 isComplete xs [] = False
 isComplete xs ys = and (map (/=Nothing) [lookup x ys | x <- xs])
 
+-- Computes the result of an expression given a valuation for its variables
 evalExpr :: Expr -> Valuation -> Integer
 evalExpr expr val
     | isComplete (vars expr) val = intEvalExpr expr val
     | otherwise                  = error "Incomplete evaluation given"
 
+-- Does the same as evalExpr but assumes that there are no variables undefined
 intEvalExpr :: Expr -> Valuation -> Integer
 intEvalExpr (Val n) _      = n
 intEvalExpr (Var n) v      = sure (lookup n v)
@@ -58,7 +64,12 @@ intEvalExpr (e1 :*: e2) v  = intEvalExpr e1 v * intEvalExpr e2 v
 intEvalExpr (e1 :/: e2) v  = intEvalExpr e1 v `div` intEvalExpr e2 v
 intEvalExpr (e1 :%: e2) v  = intEvalExpr e1 v `mod` intEvalExpr e2 v
 
--- Tokenizer for parser
+-- Parser interface
+toExpr :: String -> Expr
+toExpr s = parseE (tokenize s)
+
+-- Turns a string representation of an expression into tokens that are usable
+-- by the parser
 tokenize :: String -> [String]
 tokenize [] = []
 tokenize (c:str)
@@ -69,6 +80,46 @@ tokenize (c:str)
     | isParen c = [c] : tokenize str
     | otherwise = error ("Unrecognised character: " ++ [c])
 
+-- Finds a sub-expression in an expression, does not return the closing bracket
+findSubExpr :: [String] -> [String]
+findSubExpr [] = []
+findSubExpr (s:ss) = (fse 0 (s:ss))
+    where fse :: Integer -> [String] -> [String]
+          fse i [] = []
+          fse i (e:es)
+            | isCloseParen (head e) && i < 1 = []
+            | isCloseParen (head e)          = e : (fse (i-1) es)
+            | isOpenParen  (head e)          = e : (fse (i+1) es)
+            | otherwise                      = e : (fse i es)
+
+-- General parser for an entire expression
+parseE :: [String] -> Expr
+parseE [] = Val 0
+parseE (e:es) = parseT (fst leftSub) (snd leftSub)
+    where leftSub = parseF (e:es)
+
+-- Parse * / % + -
+parseT :: Expr -> [String] -> Expr
+parseT expr [] = expr
+parseT expr (e:es)
+    | e == "*" = parseT (expr :*: fst rightSub) (snd rightSub)
+    | e == "/" = parseT (expr :/: fst rightSub) (snd rightSub)
+    | e == "%" = parseT (expr :%: fst rightSub) (snd rightSub)
+    | e == "+" = expr :+: parseT (fst rightSub) (snd rightSub)
+    | e == "-" = expr :-: parseT (fst rightSub) (snd rightSub)
+    | otherwise = error ("Invalid operator: " ++ e)
+    where rightSub = parseF es
+
+-- Parse fact (but check if the fact is a subexpression)
+-- Returns: tuple (parsed expression; remaining tokens to parse)
+parseF :: [String] -> (Expr, [String])
+parseF (e:es)
+    | isDigit (head e) = (Val (read e :: Integer), es)
+    | isAlpha (head e) = (Var e, es)
+    | e == "(" = (parseE subexpression, drop (1 + length subexpression) es)
+    where subexpression = findSubExpr (es)
+
+-- Helper functions for the parser
 isOper :: Char -> Bool
 isOper c = elem c "+-*/%"
 
@@ -80,53 +131,6 @@ isOpenParen c = elem c "("
 
 isCloseParen :: Char -> Bool
 isCloseParen c = elem c ")"
-
-toExpr :: String -> Expr
-toExpr s = parseE (tokenize s)
-
--- Finds a sub-expression, is very naive so doesn't support nested sub-expressions
-findSubExpr :: [String] -> [String]
-findSubExpr [] = []
-findSubExpr (s:ss) = (fse 0 (s:ss))
-
-fse :: Integer -> [String] -> [String]
-fse i [] = []
-fse i (f:fs)
-    | isCloseParen (head f) && i < 1 = []
-    | isCloseParen (head f)          = f : (fse (i-1) fs)
-    | isOpenParen  (head f)          = f : (fse (i+1) fs)
-    | otherwise                      = f : (fse i fs)
-
--- General parser
-parseE :: [String] -> Expr
-parseE [] = Val 0
-parseE (e:es) = parseT (fst leftSub) (snd leftSub)
-    where leftSub = parseF (e:es)
-
--- Parse + and -
-parseE' :: Expr -> [String] -> Expr
-parseE' expr (e:es) = expr
-
--- Parse * / % + -
-parseT :: Expr -> [String] -> Expr
-parseT expr [] = expr
-parseT expr (e:es)
-    | e == "*" = parseT ((expr) :*: fst rightSub) (snd rightSub)
-    | e == "/" = parseT ((expr) :/: fst rightSub) (snd rightSub)
-    | e == "%" = parseT ((expr) :%: fst rightSub) (snd rightSub)
-    | e == "+" = parseT ((expr) :+: fst rightSub) (snd rightSub)
-    | e == "-" = parseT ((expr) :-: fst rightSub) (snd rightSub)
-    | otherwise = error ("Invalid operator: " ++ e)
-    where rightSub = parseF es
-
--- Parse fact (but check if the fact is a subexpression)
--- Tuple returned is the parsed expression; remaining tokens to parse
-parseF :: [String] -> (Expr, [String])
-parseF (e:es)
-    | isDigit (head e) = (Val (read e :: Integer), es)
-    | isAlpha (head e) = (Var e, es)
-    | e == "(" = (parseE subexpression, drop (1 + length subexpression) es)
-    where subexpression = findSubExpr (es)
 
 -- Simplify expressions
 canSimplify :: Expr -> Bool
