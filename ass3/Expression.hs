@@ -140,6 +140,21 @@ canSimplify e       = null $ vars e
 simplifyExpr :: Expr -> Expr
 simplifyExpr (Val n) = Val n
 simplifyExpr (Var n) = Var n
+simplifyExpr e@((e1 :+: e2) :+: e3)
+    | canSimplify (e2 :+: e3)= (e1 :+: Val (evalExpr (e2 :+:e3) []))
+    | otherwise              = e
+simplifyExpr e@((e1 :-: e2) :-: e3)
+    | canSimplify (e2 :-: e3)= simplifyExpr (e1 :-: Val (evalExpr (e2 :+: e3) []))
+    | otherwise              = e
+simplifyExpr e@((e1 :*: e2) :*: e3)
+    | canSimplify (e2 :*: e3)= (e1 :*: Val (evalExpr (e2 :*:e3) []))
+    | otherwise              = e
+simplifyExpr e@((e1 :/: e2) :/: e3)
+    | canSimplify (e2 :/: e3)= (e1 :/: Val (evalExpr (e2 :/:e3) []))
+    | otherwise              = e
+simplifyExpr e@((e1 :%: e2) :%: e3)
+    | canSimplify (e2 :%: e3)= (e1 :%: Val (evalExpr (e2 :%:e3) []))
+    | otherwise              = e
 simplifyExpr e@(e1 :+: e2)
     | canSimpe1 && canSimpe2 = Val (evalExpr e [])
     | canSimpe1              = Val (evalExpr e1 []) :+: e2
@@ -147,6 +162,7 @@ simplifyExpr e@(e1 :+: e2)
     | otherwise              = e
     where canSimpe1 = canSimplify e1
           canSimpe2 = canSimplify e2
+simplifyExpr e@(e1 :-: (Val 0))= simplifyExpr e1
 simplifyExpr e@(e1 :-: e2)
     | canSimpe1 && canSimpe2 = Val (evalExpr e [])
     | canSimpe1              = Val (evalExpr e1 []) :-: e2
