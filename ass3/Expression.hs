@@ -15,23 +15,21 @@ data Expr =
 instance Show Expr where
     show (Val n) = show n
     show (Var n) = n
-    show (e1 :+: e2) = intShow e1 e2 " + "
-    show (e1 :-: e2) = intShow e1 e2 " - "
-    show (e1 :*: e2) = intShow e1 e2 " * "
-    show (e1 :/: e2) = intShow e1 e2 " / "
-    show (e1 :%: e2) = intShow e1 e2 " % "
+    show (e1 :+: e2) = intShow e1 " + " e2
+    show (e1 :-: e2) = intShow e1 " - " e2
+    show (e1 :*: e2) = intShow e1 " * " e2
+    show (e1 :/: e2) = intShow e1 " / " e2
+    show (e1 :%: e2) = intShow e1 " % " e2
 
 -- Internal show function to cut down on lines in show inheritance
-intShow :: Expr -> Expr -> String -> String
-intShow (Val l) (Val r) op = show l ++ op ++ show r
-intShow (Val l) (Var r) op = show l ++ op ++      r
-intShow (Val l) (    r) op = show l ++ op ++ "(" ++ show r ++ ")"
-intShow (Var l) (Val r) op =      l ++ op ++ show r
-intShow (Var l) (Var r) op =      l ++ op ++      r
-intShow (Var l) (    r) op =      l ++ op ++ "(" ++ show r ++ ")"
-intShow (    l) (Val r) op = "(" ++ show l ++ ")" ++ op ++ show r
-intShow (    l) (Var r) op = "(" ++ show l ++ ")" ++ op ++      r
-intShow (    l) (    r) op = "(" ++ show l ++ ")" ++ op ++ "(" ++ show r ++ ")"
+intShow :: Expr -> String -> Expr -> String
+intShow (Val l) op e2 = show l               ++ op ++ intShow2 e2
+intShow (Var l) op e2 =      l               ++ op ++ intShow2 e2
+intShow (    l) op e2 = "(" ++ show l ++ ")" ++ op ++ intShow2 e2
+intShow2 :: Expr -> String
+intShow2 (Val r) = show r
+intShow2 (Var r) = r
+intShow2      r  = "(" ++ show r ++ ")"
 
 -- Merge two sorted lists into a single sorted list
 merge :: Ord a => [a] -> [a] -> [a]
