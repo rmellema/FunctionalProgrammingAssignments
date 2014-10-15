@@ -22,3 +22,5 @@ cabal.config
 
 # remove .zips
 *.zip
+
+ass3/Main
