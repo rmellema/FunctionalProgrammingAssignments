@@ -1,4 +1,4 @@
-module Compare where
+module Compare(Comparison, evalCmp, toComparison, Valuation) where
 
 import Expression
 
