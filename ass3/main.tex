@@ -1,0 +1,53 @@
+\documentclass[a4paper]{article}
+
+\usepackage{fullpage}
+\usepackage{listings}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+\definecolor{light-gray}{gray}{0.95}
+\lstset{tabsize=4,
+	breaklines=true,
+	breakatwhitespace=true,
+	basicstyle=\scriptsize,
+	language={Haskell},
+	showstringspaces=false,
+	numberstyle=\tiny,
+	escapeinside={--(}{)--},
+	numbers=left,
+	backgroundcolor=\color{light-gray},
+	frame=single,
+}
+
+\title{Functional Programming lab 3}
+\author{Ren\'e Mellema (s23488002) \and Xeryus Stokkel (s233279)}
+
+\begin{document}
+
+\maketitle
+
+\section{Types}
+
+\lstinputlisting[caption={The \lstinline{module Types}}, label=code:types]{Types.hs}
+
+\section{Valuation}
+
+\lstinputlisting[caption={The \lstinline{module Valuation}}, label=code:val]{Valuation.hs}
+
+\section{Expression}
+We also tried to write \lstinline{simplifyExpr} and it can simplify some expressions, but not others. This has to do with the structure of the tree of evaluations. It also won't simplify subtrees that have variables in it. 
+
+\lstinputlisting[caption={The \lstinline{module Expression}}, label=code:expr]{Expression.hs}
+
+\section{Compare}
+
+\lstinputlisting[caption={The \lstinline{module Compare}}, label=code:comp]{Compare.hs}
+
+\section{Main}
+
+\lstinputlisting[caption={The \lstinline{module Main}}, label=code:main]{Main.hs}
+
+
+
+\end{document}
